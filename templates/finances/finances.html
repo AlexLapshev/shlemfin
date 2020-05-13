@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="buttons-filter">
+        <h3>Доходы/Расходы: </h3>
+
+        <div class="btns-f">
+            <button class="btn btn-info active btn-filter">Все</button>
+            <button class="btn btn-info btn-filter">Доходы</button>
+            <button class="btn btn-info btn-filter">Расходы</button>
+        </div>
+    </div>
+    <button class="btn-merch btn btn-info">Открыть</button>
+    <ul class="list-group">
+        {% for operation in all_operations %}
+            <li class="d-flex list-oper">
+                <div class="list-oper-item">
+                    {% if operation.product %}{{ operation.product }}{% endif %}{{ operation.title }}</div>
+                <div class="list-oper-item">{{ operation.value }} рублей</div>
+                <div class="list-oper-item">
+                    {% if operation.operation %}
+                        Доход
+                    {% else %}
+                        Расход
+                    {% endif %}
+                </div>
+                <div class="list-oper-item">{{ operation.date_added }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Мерч: </h3>
+    <button class="btn-merch btn btn-info">Открыть</button>
+
+    <ul class="list-group merch-list d-none">
+        {% for product in all_products %}
+            <li class="d-flex list-product">
+                <div class="list-product-item">{{ product.name }}</div>
+                <div class="list-product-item">{{ product.quantity }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Долги: </h3>
+    <button class="btn-merch btn btn-info">Открыть</button>
+
+    <ul class="list-group merch-list d-none">
+        {% for debt in debts %}
+            <li class="d-flex list-product">
+                <div class="list-product-item">{{ debt.user.first_name }}</div>
+                <div class="list-product-item">{{ debt.value }}</div>
+                <div class="list-product-item">{{ debt.description }}</div>
+            </li>
+        {% endfor %}
+
+    </ul>
+    <p class="total-debt">Долги: <span class="main-info">{{ total_debt }} рублей</p>
+    <p class="total-money">Всего: <span class="main-info">{{ total }} рублей</span></p>
+
+
+
+
+
+
+
+{% endblock %}

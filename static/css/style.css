@@ -1,0 +1,60 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.navbar {
+    padding: 7px 400px;
+}
+
+.buttons-filter {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-filter {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.list-group {
+    margin-top: 5px;
+}
+
+.list-oper {
+    margin-bottom: 3px;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 8px;
+    padding: 12px 0;
+}
+
+.list-oper-item {
+    width: 25%;
+    text-align: center;
+}
+
+.list-product {
+    margin-bottom: 3px;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 8px;
+    padding: 12px 0;
+}
+
+.list-product-item {
+    width: 50%;
+    text-align: center;
+}
+
+h3 {
+    margin: 5px 0 0 0;
+    padding: 0;
+}
+
+.btn-merch {
+    margin: 10px 0;
+}
+
+.main-info {
+    font-size: 20px;
+    color: rgba(255, 51, 57, 0.75);
+}
