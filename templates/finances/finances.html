@@ -28,7 +28,14 @@
             </li>
         {% endfor %}
     </ul>
-
+    <form method="post" class="new-finance-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Добавить">
+    </form>
+    <div class="success-add">
+        Вы успешно добавили элемент
+    </div>
     <h3>Мерч: </h3>
     <button class="btn-merch btn btn-info">Открыть</button>
 
@@ -40,6 +47,8 @@
             </li>
         {% endfor %}
     </ul>
+
+
 
     <h3>Долги: </h3>
     <button class="btn-merch btn btn-info">Открыть</button>
@@ -54,9 +63,11 @@
         {% endfor %}
 
     </ul>
-    <p class="total-debt">Долги: <span class="main-info">{{ total_debt }} рублей</p>
-    <p class="total-money">Всего: <span class="main-info">{{ total }} рублей</span></p>
 
+
+
+    <p class="total-debt total-number">Долги: <span class="main-info">{{ total_debt }} рублей</p>
+    <p class="total-money total-number">Всего: <span class="main-info">{{ total }} рублей</span></p>
 
 
 

@@ -9,7 +9,7 @@ class BaseFinance(models.Model):
 	date_added = models.DateTimeField('Дата', auto_now=True)
 	BOOL_CHOICES = ((True, 'Доход'), (False, 'Расход'))
 
-	operation = models.BooleanField(choices=BOOL_CHOICES)
+	operation = models.BooleanField('Операция', choices=BOOL_CHOICES)
 
 	class Meta:
 		verbose_name = "Финанс"
