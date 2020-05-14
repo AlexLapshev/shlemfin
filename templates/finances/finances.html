@@ -34,17 +34,24 @@
         <input type="submit" value="Добавить">
     </form>
     <div class="success-add">
-        Вы успешно добавили элемент
+        Успешно добалено
     </div>
     <h3>Мерч: </h3>
     <button class="btn-merch btn btn-info">Открыть</button>
 
     <ul class="list-group merch-list d-none">
         {% for product in all_products %}
-            <li class="d-flex list-product">
-                <div class="list-product-item">{{ product.name }}</div>
-                <div class="list-product-item">{{ product.quantity }}</div>
-            </li>
+            {% if product.available %}
+                <li class="d-flex list-product available">
+                    <div class="list-product-item">{{ product.name }}</div>
+                    <div class="list-product-item">{{ product.quanity }}</div>
+                </li>
+            {% else %}
+                <li class="d-flex list-product not-available">
+                    <div class="list-product-item">{{ product.name }}</div>
+                    <div class="list-product-item">{{ product.quanity }}</div>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
 

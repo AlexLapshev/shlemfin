@@ -96,3 +96,11 @@ p input {
     border-radius: 6px;
     padding-top: 6px;
 }
+
+.not-available {
+    background: rgba(255,2,0,0.54);
+}
+
+.available {
+    background: rgba(90,255,0,0.54);
+}

@@ -8,7 +8,6 @@ class BaseFinance(models.Model):
 	title = models.CharField('Название', max_length=120, blank=True)
 	date_added = models.DateTimeField('Дата', auto_now=True)
 	BOOL_CHOICES = ((True, 'Доход'), (False, 'Расход'))
-
 	operation = models.BooleanField('Операция', choices=BOOL_CHOICES)
 
 	class Meta:
@@ -25,11 +24,16 @@ class BaseFinance(models.Model):
 class Product(models.Model):
 	name = models.CharField('Наименование', max_length=120)
 	price = models.IntegerField('Цена')
-	quantity = models.IntegerField('Количество')
+	quanity = models.IntegerField('Количество')
+	available = models.BooleanField('Наличие', default=True)
+
+	@classmethod
+	def available_products(cls):
+		cls.objects.filter(available=True)
 
 	class Meta:
 		verbose_name = 'Товар'
-		verbose_name_plural = 'Товар'
+		verbose_name_plural = 'Товары'
 
 	def __str__(self):
 		return self.name

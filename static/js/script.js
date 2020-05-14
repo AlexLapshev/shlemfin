@@ -65,17 +65,18 @@ function ajaxAdd() {
     $('.new-finance-form').on('submit', function (event) {
         event.preventDefault();
         $.ajax({
-            type:'POST',
-            url:'/',
-            data:{
-                product:$('#id_product').val(),
-                value:$('#id_value').val(),
-                title:$('#id_title').val(),
-                operation:$('#id_operation').val(),
-                csrfmiddlewaretoken:$('input[name="csrfmiddlewaretoken"]').val()
+            type: 'POST',
+            url: '/',
+            data: {
+                product: $('#id_product').val(),
+                value: $('#id_value').val(),
+                title: $('#id_title').val(),
+                operation: $('#id_operation').val(),
+                csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
             },
-            success:function () {
+            success: function () {
                 $(".success-add").show(800);
+                $('.new-finance-form')[0].reset();
                 setTimeout(
                     function () {
                         $(".success-add").hide(800)

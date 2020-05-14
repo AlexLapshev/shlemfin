@@ -11,6 +11,9 @@ def finances(request):
 		value = request.POST['value']
 		title = request.POST['title']
 		operation = request.POST['operation']
+		product.quanity -= 1
+		if product.quanity == 0:
+			product.available = False
 		finance = BaseFinance(
 			product=product,
 			value=value,
@@ -18,8 +21,7 @@ def finances(request):
 			operation=operation
 		)
 		finance.save()
-
-		print(product, value, title, operation)
+		product.save()
 		return HttpResponse('')
 
 	all_operations = BaseFinance.objects.all()
