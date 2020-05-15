@@ -1,8 +1,8 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 
-from .models import BaseFinance, Outerwear, Other, Debt, Product
-from .forms import OuterwearForm
+from .models import BaseFinance, Outerwear, Other, Debt
+from .forms import OuterwearForm, OtherForm
 
 
 def finances(request):
@@ -28,10 +28,8 @@ def finances(request):
 			return HttpResponse('')
 
 	all_operations = BaseFinance.objects.all()
-	all_products = Product.objects.all()
-
+	all_other = Other.objects.all()
 	all_outerwear = Outerwear.all_outer_wear()
-	print(all_products)
 
 	debts = Debt.objects.all()
 	total = 0
@@ -42,11 +40,13 @@ def finances(request):
 			total -= i.price
 	total_debt = sum([i.value for i in debts])
 	form = OuterwearForm()
+	form_other = OtherForm()
 	return render(request, 'finances/finances.html', {'all_operations': all_operations,
 													  'all_outerwear': all_outerwear,
-													  'all_products': all_products,
+													  'all_other': all_other,
 													  'total': total,
 													  'debts': debts,
 													  'total_debt': total_debt,
 													  'form': form,
+													  'form_other':form_other
 													  })

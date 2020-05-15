@@ -13,6 +13,7 @@ class BaseFinance(models.Model):
 	class Meta:
 		verbose_name = "Финанс"
 		verbose_name_plural = "Финансы"
+		ordering = ['-date_added']
 
 	def __str__(self):
 		return self.optional_info

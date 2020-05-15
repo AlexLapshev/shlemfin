@@ -87,7 +87,7 @@ function ajaxAdd() {
                         $('.new-finance-form')[0].reset();
                         setTimeout(
                             function () {
-                                $(".success-add").hide(800)
+                                $(".success-add").hide(800);
                             }, 3000);
                     }
                 })

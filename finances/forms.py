@@ -1,5 +1,5 @@
 from django import forms
-from .models import Outerwear
+from .models import Outerwear, Other
 
 
 class OuterwearForm(forms.ModelForm):
@@ -14,24 +14,11 @@ class OuterwearForm(forms.ModelForm):
 			'price': "Цена",
 		}
 
-# class BaseFinanceForm(forms.ModelForm):
-# 	class Meta:
-# 		exclude = []
-#
-#
-# class ExampleModelForm(BaseFinanceForm):
-# 	class Meta(BaseFinanceForm.Meta):
-# 		model = BaseFinance
 
+class OtherForm(forms.ModelForm):
+	optional_info = forms.CharField(max_length=120, label='Дополнительно', required=False)
 
-# class SizeForm(forms.Form):
-# 	CHOICES = (("False", "---------"), ('s', 'S',), ('m', 'M',), ('l', 'L',), ('xl', 'XL',), ('xxl', 'XXL',))
-# 	size = forms.ChoiceField(choices=CHOICES, )
-#
-#
-# class BaseFinanceForm(forms.ModelForm):
-# 	class Meta:
-# 		model = BaseFinance
-# 		fields = ['product', 'value', 'operation', 'title']
+	class Meta(OuterwearForm.Meta):
+		model = Other
 
 
