@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -70,23 +74,6 @@ h3 {
     display: none;
 }
 
-form label {
-    min-width: 100px;
-}
-
-p input:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-p input {
-    /*width: 100px;*/
-    background: transparent;
-    padding: 2px 20px;
-    border: 1px solid #cccccc;
-    border-radius: 8px;
-}
-
 .total-number {
     background: rgba(85, 255, 49, 0.29);
     width: 200px;
@@ -98,9 +85,43 @@ p input {
 }
 
 .not-available {
-    background: rgba(255,2,0,0.54);
+    background: rgba(255, 2, 0, 0.54);
 }
 
 .available {
-    background: rgba(90,255,0,0.54);
+    background: rgba(90, 255, 0, 0.54);
 }
+
+.img_choice {
+    display: inline-block;
+    cursor: pointer;
+    border: 2px solid transparent;
+
+}
+
+.img_choice-active {
+    border: 2px solid rgba(45, 255, 10, 0.54);
+}
+
+.img_choice img {
+    height: 80px;
+}
+
+p label {
+    min-width: 150px;
+}
+
+.outer-img img {
+    height: 50px;
+}
+
+.select-size-hidden {
+    display: none;
+}
+
+select option {
+}
+
+
+
+

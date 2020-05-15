@@ -11,12 +11,11 @@
         </div>
     </div>
     <button class="btn-merch btn btn-info">Открыть</button>
-    <ul class="list-group">
+    <ul class="list-group d-none">
         {% for operation in all_operations %}
             <li class="d-flex list-oper">
-                <div class="list-oper-item">
-                    {% if operation.product %}{{ operation.product }}{% endif %}{{ operation.title }}</div>
-                <div class="list-oper-item">{{ operation.value }} рублей</div>
+                <div class="list-oper-item">{{ operation.optional_info }}</div>
+                <div class="list-oper-item">{{ operation.price }} рублей</div>
                 <div class="list-oper-item">
                     {% if operation.operation %}
                         Доход
@@ -28,30 +27,90 @@
             </li>
         {% endfor %}
     </ul>
-    <form method="post" class="new-finance-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Добавить">
-    </form>
+    <div class="form-wrapper">
+        <form method="post" class="new-finance-form">
+
+            {% csrf_token %}
+            <div class="img__choice-wrapper">
+                <input type="hidden" id="id_product" value="">
+                {% for outerwear in all_outerwear %}
+                    <div class="img_choice"><img src="{{ outerwear.img }}" alt=""></div>
+                    <input type="hidden" class="img_id" value="{{ outerwear.id }}">
+                    <input type="hidden" class="img_price" value="{{ outerwear.price }}">
+                {% endfor %}
+            </div>
+            {% for outerwear in all_outerwear %}
+                <div class="select-size-wrapper select-size-hidden">
+                    <label for="id_size">Размер</label>
+                    <input type="hidden" value="{{ outerwear.id }}">
+                    <select name="size" id="id_size">
+                        <option selected="true" disabled="disabled">Выберите размер</option>
+                        {% for size,value in outerwear.sizes.items %}
+                            {% if value != 0 %}
+                                <option value="{{ size }}">{{ size }}</option>
+                            {% else %}
+                                <option disabled value="{{ size }}">{{ size }} Недоступно</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+
+            <div class="price-add">
+                <p>
+                    <label for="id_price">Цена</label>
+                    <input type="number" name="price" required="" id="id_price" value="">
+                </p>
+                <p>
+                    <label for="id_optional_info">Дополнительно</label>
+                    {{ form.optional_info }}
+                </p>
+                <input type="submit" value="Добавить">
+
+            </div>
+
+
+        </form>
+    </div>
     <div class="success-add">
         Успешно добалено
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
     <h3>Мерч: </h3>
     <button class="btn-merch btn btn-info">Открыть</button>
 
     <ul class="list-group merch-list d-none">
-        {% for product in all_products %}
-            {% if product.available %}
-                <li class="d-flex list-product available">
-                    <div class="list-product-item">{{ product.name }}</div>
-                    <div class="list-product-item">{{ product.quanity }}</div>
-                </li>
-            {% else %}
-                <li class="d-flex list-product not-available">
-                    <div class="list-product-item">{{ product.name }}</div>
-                    <div class="list-product-item">{{ product.quanity }}</div>
-                </li>
-            {% endif %}
+        {% for outerwear in all_outerwear %}
+            <li main-fin-item>
+                <h3>{{ outerwear.name }}</h3>
+                <div class="outer-img"><img src="{{ outerwear.img }}" alt=""></div>
+            </li>
+
+            {% for size, value in outerwear.sizes.items %}
+                {% if value == 0 %}
+                    <li class="not-available">
+                        <span>{{ value }}</span>
+                        <span>{{ size }}</span>
+                    </li>
+                {% else %}
+                    <li class="available">
+                        <span>{{ value }}</span>
+                        <span>{{ size }}</span>
+                    </li>
+                {% endif %}
+
+            {% endfor %}
         {% endfor %}
     </ul>
 
@@ -73,7 +132,7 @@
 
 
 
-    <p class="total-debt total-number">Долги: <span class="main-info">{{ total_debt }} рублей</p>
+    <p class="total-debt total-number">Долги: <span class="main-info">{{ total_debt }} рублей</span></p>
     <p class="total-money total-number">Всего: <span class="main-info">{{ total }} рублей</span></p>
 
 

@@ -4,6 +4,7 @@ $(document).ready(function () {
     expences();
     all();
     openMerch();
+    chooseProduct();
     ajaxAdd();
 });
 
@@ -63,26 +64,71 @@ function openMerch() {
 
 function ajaxAdd() {
     $('.new-finance-form').on('submit', function (event) {
-        event.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/',
-            data: {
-                product: $('#id_product').val(),
-                value: $('#id_value').val(),
-                title: $('#id_title').val(),
-                operation: $('#id_operation').val(),
-                csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
-            },
-            success: function () {
-                $(".success-add").show(800);
-                $('.new-finance-form')[0].reset();
-                setTimeout(
-                    function () {
-                        $(".success-add").hide(800)
-                    }, 3000);
+            event.preventDefault();
+            let size = $('.active-select').children('select').children('option:selected').val();
+            console.log(size);
+
+            if (size.length > 3) {
+                alert('Выберите Размер')
             }
-        })
-    });
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    data: {
+                        product: $('#id_product').val(),
+                        price: $('#id_price').val(),
+                        size: size,
+                        optional_info: $('#id_optional_info').val(),
+                        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function () {
+                        $(".success-add").show(800);
+                        $('.new-finance-form')[0].reset();
+                        setTimeout(
+                            function () {
+                                $(".success-add").hide(800)
+                            }, 3000);
+                    }
+                })
+            }
+        }
+    )
+    ;
 }
 
+function chooseProduct() {
+    $('.img_choice:first').addClass('img_choice-active');
+    getIdPrice();
+    $('.select-size-hidden:first').removeClass('select-size-hidden');
+    $('.select-size-wrapper:first').addClass('active-select');
+    $('.img_choice').on('click', function () {
+        $('.img_choice').each(function () {
+            $(this).removeClass('img_choice-active');
+            $('.select-size-wrapper').each(function () {
+                $(this).removeClass('select-size-hidden')
+            })
+        });
+        $(this).addClass('img_choice-active');
+        let idP = $(this).next('.img_id').val();
+        $('.select-size-wrapper').each(function () {
+            $(this).removeClass('active-select');
+            $(this).removeClass('select-size-hidden');
+            idS = $(this).children('input').val();
+            if (idS !== idP) {
+                $(this).addClass('select-size-hidden');
+            }
+            else {
+                $(this).addClass('active-select');
+            }
+        });
+        getIdPrice();
+    })
+}
+
+function getIdPrice() {
+    let productId = $('.img_choice-active').next('.img_id').val();
+    let productPrice = $('.img_choice-active').nextAll('.img_price').val();
+    $('#id_price').val(productPrice);
+    $('#id_product').val(productId)
+}
