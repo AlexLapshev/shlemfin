@@ -32,8 +32,6 @@ class Product(models.Model):
 		verbose_name = 'Товар'
 		verbose_name_plural = 'Товары'
 
-	# abstract = True
-
 	def __str__(self):
 		return self.name
 
@@ -93,7 +91,7 @@ class Outerwear(Product, SizeMixin):
 class Debt(models.Model):
 	value = models.IntegerField('Сумма')
 	description = models.CharField('Описание', max_length=120)
-	user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='debts')
+	user = models.ForeignKey(User, verbose_name='Участник', on_delete=models.PROTECT, related_name='debts')
 
 	class Meta:
 		verbose_name = 'Долг'

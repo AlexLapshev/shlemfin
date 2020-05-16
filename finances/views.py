@@ -1,8 +1,8 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import render
 
-from .models import BaseFinance, Outerwear, Other, Debt
-from .forms import OuterwearForm, OtherForm
+from .models import BaseFinance, Outerwear, Other, Debt, Product
+from .forms import OuterwearForm, OtherForm, DebtForm
 
 
 def finances(request):
@@ -19,13 +19,10 @@ def finances(request):
 		)
 		finance.save()
 		new_q = getattr(product, size)-1
-
 		setattr(product, size, new_q)
-		if new_q < 0:
-			return HttpResponseBadRequest('Данного размера нет')
-		else:
-			product.save()
-			return HttpResponse('')
+		product.quantity = sum([product.s, product.m, product.l, product.xl, product.xxl])
+		product.save()
+		return HttpResponse('')
 
 	all_operations = BaseFinance.objects.all()
 	all_other = Other.objects.all()
@@ -41,6 +38,8 @@ def finances(request):
 	total_debt = sum([i.value for i in debts])
 	form = OuterwearForm()
 	form_other = OtherForm()
+	form_debt = DebtForm()
+
 	return render(request, 'finances/finances.html', {'all_operations': all_operations,
 													  'all_outerwear': all_outerwear,
 													  'all_other': all_other,
@@ -48,5 +47,6 @@ def finances(request):
 													  'debts': debts,
 													  'total_debt': total_debt,
 													  'form': form,
-													  'form_other':form_other
+													  'form_other':form_other,
+													  'form_debt':form_debt
 													  })

@@ -28,7 +28,10 @@
         {% endfor %}
     </ul>
     <div class="form-wrapper">
-        <form method="post" class="new-finance-form">
+        <h3>Добавить </h3>
+        <button class="btn-merch btn btn-info">Открыть</button>
+
+        <form method="post" class="new-finance-form d-none">
 
             {% csrf_token %}
             <div class="img__choice-wrapper">
@@ -65,55 +68,54 @@
                     <label for="id_optional_info">Дополнительно</label>
                     {{ form.optional_info }}
                 </p>
-                <input type="submit" value="Добавить">
+                <input type="submit" class="btn btn-success" value="Добавить">
 
             </div>
         </form>
 
-{#        <form method="post" class="other-product-form">#}
-{##}
-{#            {% csrf_token %}#}
-{#            <div class="img__choice-wrapper">#}
-{#                <input type="hidden" id="id_product" value="">#}
-{#                {% for other in all_other %}#}
-{#                    <div class="img_choice"><img src="{{ other.image }}" alt=""></div>#}
-{#                    <input type="hidden" class="img_id" value="{{ other.id }}">#}
-{#                    <input type="hidden" class="img_price" value="{{ other.price }}">#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#            {% for outerwear in all_outerwear %}#}
-{#                <div class="select-size-wrapper select-size-hidden">#}
-{#                    <label for="id_size">Размер</label>#}
-{#                    <input type="hidden" value="{{ outerwear.id }}">#}
-{#                    <select name="size" id="id_size">#}
-{#                        <option selected="true" disabled="disabled">Выберите размер</option>#}
-{#                        {% for size,value in outerwear.sizes.items %}#}
-{#                            {% if value != 0 %}#}
-{#                                <option value="{{ size }}">{{ size }}</option>#}
-{#                            {% else %}#}
-{#                                <option disabled value="{{ size }}">{{ size }} Недоступно</option>#}
-{#                            {% endif %}#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-{#                </div>#}
-{#            {% endfor %}#}
-{##}
-{#            <div class="price-add">#}
-{#                <p>#}
-{#                    <label for="id_price">Цена</label>#}
-{#                    <input type="number" name="price" required="" id="id_price" value="">#}
-{#                </p>#}
-{#                <p>#}
-{#                    <label for="id_optional_info">Дополнительно</label>#}
-{#                    {{ form.optional_info }}#}
-{#                </p>#}
-{#                <input type="submit" value="Добавить">#}
-{##}
-{#            </div>#}
-{##}
-{##}
-{#        </form>#}
-
+        {#        <form method="post" class="other-product-form">#}
+        {##}
+        {#            {% csrf_token %}#}
+        {#            <div class="img__choice-wrapper">#}
+        {#                <input type="hidden" id="id_product" value="">#}
+        {#                {% for other in all_other %}#}
+        {#                    <div class="img_choice"><img src="{{ other.image }}" alt=""></div>#}
+        {#                    <input type="hidden" class="img_id" value="{{ other.id }}">#}
+        {#                    <input type="hidden" class="img_price" value="{{ other.price }}">#}
+        {#                {% endfor %}#}
+        {#            </div>#}
+        {#            {% for outerwear in all_outerwear %}#}
+        {#                <div class="select-size-wrapper select-size-hidden">#}
+        {#                    <label for="id_size">Размер</label>#}
+        {#                    <input type="hidden" value="{{ outerwear.id }}">#}
+        {#                    <select name="size" id="id_size">#}
+        {#                        <option selected="true" disabled="disabled">Выберите размер</option>#}
+        {#                        {% for size,value in outerwear.sizes.items %}#}
+        {#                            {% if value != 0 %}#}
+        {#                                <option value="{{ size }}">{{ size }}</option>#}
+        {#                            {% else %}#}
+        {#                                <option disabled value="{{ size }}">{{ size }} Недоступно</option>#}
+        {#                            {% endif %}#}
+        {#                        {% endfor %}#}
+        {#                    </select>#}
+        {#                </div>#}
+        {#            {% endfor %}#}
+        {##}
+        {#            <div class="price-add">#}
+        {#                <p>#}
+        {#                    <label for="id_price">Цена</label>#}
+        {#                    <input type="number" name="price" required="" id="id_price" value="">#}
+        {#                </p>#}
+        {#                <p>#}
+        {#                    <label for="id_optional_info">Дополнительно</label>#}
+        {#                    {{ form.optional_info }}#}
+        {#                </p>#}
+        {#                <input type="submit" value="Добавить">#}
+        {##}
+        {#            </div>#}
+        {##}
+        {##}
+        {#        </form>#}
 
 
     </div>
@@ -126,10 +128,10 @@
 
     <ul class="list-group merch-list d-none">
         {% for outerwear in all_outerwear %}
-            <li main-fin-item>
+            <div main-fin-item>
                 <h3>{{ outerwear.name }}</h3>
                 <div class="outer-img"><img src="{{ outerwear.img }}" alt=""></div>
-            </li>
+            </div>
 
             {% for size, value in outerwear.sizes.items %}
                 {% if value == 0 %}
@@ -146,6 +148,21 @@
 
             {% endfor %}
         {% endfor %}
+        {% for other in all_other %}
+            <div main-fin-item>
+                <h3>{{ other.name }}</h3>
+                <div class="outer-img"><img src="{{ other.image.url }}" alt=""></div>
+                {% if other.quantity == 0 %}
+                    <li class="not-available">
+                        <span>{{ other.quantity }}</span>
+                    </li>
+                {% else %}
+                    <li class="available">
+                        <span>{{ other.quantity }}</span>
+                    </li>
+                {% endif %}
+            </div>
+        {% endfor %}
     </ul>
 
 
@@ -161,7 +178,11 @@
                 <div class="list-product-item">{{ debt.description }}</div>
             </li>
         {% endfor %}
-
+        <form method="post">
+            {% csrf_token %}
+            {{ form_debt.as_p }}
+            <input type="submit" class="btn btn-success" value="Добавить">
+        </form>
     </ul>
 
 

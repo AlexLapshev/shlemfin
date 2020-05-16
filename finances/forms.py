@@ -1,5 +1,5 @@
 from django import forms
-from .models import Outerwear, Other
+from .models import Outerwear, Other, Debt
 
 
 class OuterwearForm(forms.ModelForm):
@@ -20,5 +20,12 @@ class OtherForm(forms.ModelForm):
 
 	class Meta(OuterwearForm.Meta):
 		model = Other
+
+
+class DebtForm(forms.ModelForm):
+
+	class Meta:
+		model = Debt
+		fields = ['value', 'description', 'user']
 
 
