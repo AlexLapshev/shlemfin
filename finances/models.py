@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-from model_utils.managers import InheritanceManager
 
 
 class BaseFinance(models.Model):
+	product = models.ForeignKey('Product', on_delete=models.PROTECT, verbose_name='Товар')
 	optional_info = models.CharField('Дополнительная информация', max_length=120, blank=True)
 	price = models.IntegerField('Рубли')
 	BOOL_CHOICES = ((True, 'Доход'), (False, 'Расход'))
@@ -20,13 +20,15 @@ class BaseFinance(models.Model):
 
 
 class Product(models.Model):
-	name = models.CharField('Наименование', max_length=120)
+	name = models.CharField('Название',max_length=50)
+	quantity = models.IntegerField('Количество', blank=True, null=True)
 	price = models.IntegerField('Цена')
 	image = models.ImageField('Изображение', upload_to='images/products')
-	quantity = models.IntegerField('Количество', blank=True, null=True)
-	available = models.BooleanField('Наличие', default=True)
+	description = models.CharField('Описание', max_length=120, blank=True)
 
-	objects = InheritanceManager()
+	category = models.ForeignKey('Category', verbose_name='Категория', on_delete=models.PROTECT, related_name='product')
+	date_added = models.DateTimeField(auto_now=True)
+	available = models.BooleanField('Наличие', default=True)
 
 	class Meta:
 		verbose_name = 'Товар'
@@ -36,56 +38,57 @@ class Product(models.Model):
 		return self.name
 
 
-class Other(Product):
+class ProductMixin:
+
+	def check_available(self):
+		if self.quantity < 1:
+			self.available = False
+		else:
+			self.available = True
+
+
+class Category(models.Model):
+	name = models.CharField('Категория', max_length=30)
+
+	def __str__(self):
+		return self.name
+
+	class Meta:
+		verbose_name = 'Категория'
+		verbose_name_plural = 'Категории'
+
+
+class Size(models.Model):
+	name = models.CharField('Размер', max_length=4)
+
 	def __str__(self):
 		return self.name
 
 	class Meta:
-		verbose_name = 'Другой Товар'
-		verbose_name_plural = 'Другие Товары'
+		verbose_name = 'Размер'
+		verbose_name_plural = 'Размеры'
 
 
-class SizeMixin(models.Model):
-	s = models.IntegerField('S')
-	m = models.IntegerField('M')
-	l = models.IntegerField('L')
-	xl = models.IntegerField('XL')
-	xxl = models.IntegerField('XXL')
+class ProductDetail(models.Model, ProductMixin):
 
-	def total_quantity(self):
-		return sum[self.s, self.m, self.l, self.xl, self.xxl]
+	product = models.ForeignKey(Product, related_name='product_size', verbose_name='Товар', on_delete=models.PROTECT)
+	quantity = models.IntegerField('Количество')
+	available = models.BooleanField('Наличие', default=True)
 
 	class Meta:
-		abstract = True
+		verbose_name = 'Размеры'
+		verbose_name_plural = 'Размеры'
 
 
-class Outerwear(Product, SizeMixin):
-
-	@classmethod
-	def all_outer_wear(cls):
-		all_outer = []
-		for i in cls.objects.all():
-			all_outer.append({
-				'name': i.name,
-				'img': i.image.url,
-				'sizes': {
-					's': i.s,
-					'm': i.m,
-					'l': i.l,
-					'xl': i.xl,
-					'xxl': i.xxl,
-				},
-				'id': i.id,
-				'price': i.price
-			})
-		return all_outer
-
-	class Meta:
-		verbose_name = 'Верхняя одежда'
-		verbose_name_plural = 'Верхняя одежда'
+class OuterwearDetail(ProductDetail):
+	size = models.ForeignKey(Size, related_name='size', verbose_name='Размер', on_delete=models.PROTECT)
 
 	def __str__(self):
-		return self.name
+		return '{} {}'.format(self.product.name, self.size)
+
+	class Meta:
+		verbose_name = 'Размер'
+		verbose_name_plural = 'Размеры'
 
 
 class Debt(models.Model):
