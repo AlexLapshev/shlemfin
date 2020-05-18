@@ -2,8 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import BaseFinance, Debt, Product, OuterwearDetail
+from .models import BaseFinance, Debt, Product, OuterwearDetail, ProductDetail, Size, OtherDetail
 from .forms import BaseFinanceForm
+
 
 # from .forms import OuterwearForm, OtherForm, DebtForm
 
@@ -58,27 +59,46 @@ from .forms import BaseFinanceForm
 @csrf_exempt
 def finances(request):
 	if request.method == 'POST':
-
-		form = BaseFinanceForm(request.POST)
 		print(request.POST)
+		form = BaseFinanceForm(request.POST)
 		if form.is_valid():
 			data = form.cleaned_data
 			new_f = BaseFinance()
 			new_f.product = data['product']
-			new_f.optional_info = '{} {}'.format(data['optional_info'], data['size'])
 			new_f.price = data['price']
 			new_f.operation = data['operation']
-
-			new_f.save()
-			if data['size']:
-				product = OuterwearDetail.objects.filter(pk=request.POST['product']).first()
-				print(product.available)
+			new_f.optional_info = '{}'.format(data['optional_info'])
+			print(data['size'])
+			if data['size'] != 'False':
+				new_f.optional_info = '{} {}'.format(data['size'], data['optional_info'])
+				size_id = Size.objects.filter(name=data['size']).first().pk
+				product = OuterwearDetail.objects.filter(product=data['product'], size__pk=size_id).first()
+				product.quantity_size -= 1
+				product.check_available(product.quantity_size)
+				prod_total_q = Product.objects.filter(pk=request.POST['product']).first()
+				prod_total_q.quantity = OuterwearDetail.total_quantity(request.POST['product'])
+				prod_total_q.check_av()
+				prod_total_q.save()
+			else:
+				print(request.POST)
+				product = Product.objects.filter(pk=request.POST['product']).first()
+				product.check_av()
 				product.quantity -= 1
-				product.check_available()
-				product.save()
+				print(product)
+			product.save()
+			new_f.save()
+			return HttpResponse('')
 
 	form = BaseFinanceForm()
 	context = {
 		'form': form,
+		'products': Product.objects.all(),
+		'all_sizes': OuterwearDetail.all_sizes(),
+		'all_finances': BaseFinance.all_finances(),
+		'total': BaseFinance.total_money(),
+		'all_debts': Debt.objects.all(),
+		'all_outer': OuterwearDetail.all_outer(),
+		'all_other': OtherDetail.objects.all()
 	}
+
 	return render(request, 'finances/finances1.html', context)

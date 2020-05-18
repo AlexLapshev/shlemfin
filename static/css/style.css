@@ -119,7 +119,8 @@ p label {
     display: none;
 }
 
-select option {
+#id_optional_info {
+    margin-top: 7px;
 }
 
 

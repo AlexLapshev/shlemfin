@@ -28,10 +28,7 @@
         {% endfor %}
     </ul>
     <div class="form-wrapper">
-        <h3>Добавить </h3>
-        <button class="btn-merch btn btn-info">Открыть</button>
-
-        <form method="post" class="new-finance-form d-none">
+        <form method="post" class="new-finance-form">
 
             {% csrf_token %}
             <div class="img__choice-wrapper">
@@ -68,7 +65,7 @@
                     <label for="id_optional_info">Дополнительно</label>
                     {{ form.optional_info }}
                 </p>
-                <input type="submit" class="btn btn-success" value="Добавить">
+                <input type="submit" class="btn btn-info" value="Добавить">
 
             </div>
         </form>
@@ -181,7 +178,7 @@
         <form method="post">
             {% csrf_token %}
             {{ form_debt.as_p }}
-            <input type="submit" class="btn btn-success" value="Добавить">
+            <input type="submit" class="btn btn-info" value="Добавить">
         </form>
     </ul>
 
