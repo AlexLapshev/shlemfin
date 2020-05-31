@@ -1,195 +1,187 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    <div class="buttons-filter">
-        <h3>Доходы/Расходы: </h3>
 
-        <div class="btns-f">
-            <button class="btn btn-info active btn-filter">Все</button>
-            <button class="btn btn-info btn-filter">Доходы</button>
-            <button class="btn btn-info btn-filter">Расходы</button>
-        </div>
-    </div>
-    <button class="btn-merch btn btn-info">Открыть</button>
-    <ul class="list-group d-none">
-        {% for operation in all_operations %}
-            <li class="d-flex list-oper">
-                <div class="list-oper-item">{{ operation.optional_info }}</div>
-                <div class="list-oper-item">{{ operation.price }} рублей</div>
-                <div class="list-oper-item">
-                    {% if operation.operation %}
-                        Доход
-                    {% else %}
-                        Расход
-                    {% endif %}
-                </div>
-                <div class="list-oper-item">{{ operation.date_added }}</div>
-            </li>
-        {% endfor %}
-    </ul>
-    <div class="form-wrapper">
-        <form method="post" class="new-finance-form">
-
-            {% csrf_token %}
-            <div class="img__choice-wrapper">
-                <input type="hidden" id="id_product" value="">
-                {% for outerwear in all_outerwear %}
-                    <div class="img_choice"><img src="{{ outerwear.img }}" alt=""></div>
-                    <input type="hidden" class="img_id" value="{{ outerwear.id }}">
-                    <input type="hidden" class="img_price" value="{{ outerwear.price }}">
-                {% endfor %}
-            </div>
-            {% for outerwear in all_outerwear %}
-                <div class="select-size-wrapper select-size-hidden">
-                    <label for="id_size">Размер</label>
-                    <input type="hidden" value="{{ outerwear.id }}">
-                    <select name="size" id="id_size">
-                        <option selected="true" disabled="disabled">Выберите размер</option>
-                        {% for size,value in outerwear.sizes.items %}
-                            {% if value != 0 %}
-                                <option value="{{ size }}">{{ size }}</option>
-                            {% else %}
-                                <option disabled value="{{ size }}">{{ size }} Недоступно</option>
-                            {% endif %}
+    <section class="finances">
+        <h3 class="openning-btn">Транзакции</h3>
+        <ul class="list-group d-none">
+            {% for fin in all_finances %}
+                {% if fin.operation %}
+                    <li class="list-group-item item-operation op-true ">
+                        <span class="group-item__name">{{ fin.product }}</span>
+                        <span class="group-item__operation operation-true">Доход</span>
+                        <span class="group-item__price">{{ fin.price }} рублей</span>
+                        <span class="group-item__date">{{ fin.date_added }}</span>
+                    </li>
+                {% else %}
+                    <li class="list-group-item item-operation op-false ">
+                        <span class="group-item__name">{{ fin.product }}</span>
+                        <span class="group-item__operation operation-true">Расход</span>
+                        <span class="group-item__price">{{ fin.price }} рублей</span>
+                        <span class="group-item__date">{{ fin.date_added }}</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="add-form__section">
+        <h3 class="openning-btn">Добавить Транзакцию</h3>
+        <div class="add-finance-form d-none">
+            <form action="" method="post" class="select-size-form ">
+                <div class="select-img-wrapper d-flex">{% csrf_token %}
+                    {% for product in products %}
+                        <div class="select-img">
+                            <img src="{{ product.image.url }}" style="height: 90px" alt="">
+                            <input type="hidden" value="{{ product.price }}">
+                        </div>
+                        <input type="hidden" value="{{ product.id }}" required id="id_product">
+                    {% endfor %}</div>
+                <input id="select-img__selected" name="product" value="" type="hidden">
+                <ul class="">
+                    <li class="select-size-list">
+                        {% for a in all_sizes %}
+                            {% for k,v in a.items %}
+                                <input class="pro-id-size" type="hidden" value="{{ k }}">
+                                {% if v.items %}
+                                    <select class="select-size form-control  d-none" name="size_s">
+                                        {% for size,available in v.items %}
+                                            {% if available %}
+                                                <option value="{{ size }}">{{ size }}</option>
+                                            {% else %}
+                                                <option disabled value="{{ size }}">{{ size }} Недоступно</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <select hidden class="select-size form-control  d-none" name="size_s">
+                                        <option selected value="False"></option>
+                                    </select>
+                                {% endif %}
+                            {% endfor %}
+                            <input type="hidden" value="" name="size" id="id_size">
                         {% endfor %}
-                    </select>
+                    </li>
+                    <li class="opt-info-form">
+                        <input type="text" name="optional_info" maxlength="120" id="id_optional_info"
+                               placeholder="{{ form.optional_info.label }}" class="form-control">
+                    </li>
+                    <li class="form-group">
+                        <label for="id_price">{{ form.price.label }}</label>
+                        <input type="number" name="price" required="" class="form-control" id="id_price">
+                    </li>
+                    <li>
+                        <select class="form-control" name="operation" id="id_operation">
+                            <option value="True" selected="">Доход</option>
+                            <option value="False">Расход</option>
+                        </select>
+                    </li>
+                </ul>
+                <button type="submit" class="btn btn-info">Добавить</button>
+            </form>
+            <div class="success-add">
+                Успешно добалено
+            </div>
+        </div>
+    </section>
+
+    <section class="merchendise">
+        <h3 class="openning-btn">Мерч</h3>
+        <ul class="d-none list-group">
+            {% for k in all_outer %}
+                {% for i,j in k.items %}
+                    <h4>{{ i }}</h4>
+                    {% for size, avail in j.items %}
+                        {% if avail > 0 %}
+                            <li class="available-merch list-group-item">
+                                <span>{{ size }}</span><span>{{ avail }}</span>
+                            </li>
+                        {% else %}
+                            <li class="not-available-merch list-group-item">
+                                <span>{{ size }}</span><span>{{ avail }}</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+            {% for other in all_other %}
+                <h4>{{ other.product }}</h4>
+                {% if other.other_quantity > 0 %}
+                    <li class="available-merch list-group-item text-center d-inline-block">
+                        {{ other.other_quantity }}
+                    </li>
+                {% else %}
+                    <li class="not-available-merch list-group-item text-center">
+                        {{ other.other_quantity }}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="debts">
+        <h3 class="openning-btn">Долги</h3>
+        <ul class="d-none list-group">
+            {% for debt in all_debts %}
+                {% if debt.debt_active %}
+                    <li class="available-merch list-group-item">
+                        <span>{{ debt.user.first_name }}</span><span>{{ debt.value }}</span>
+                    </li>
+                {% else %}
+                    <li class="not-available-merch list-group-item">
+                        <span>{{ debt.user.first_name }}</span><span>{{ debt.value }}</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="send-to-section">
+        <h3 class="openning-btn">Отправления</h3>
+        <div class="send-to-wrapper d-none">
+            <div class="all-sends">
+                <ul class="list-group">
+                    {% for send in all_send_to %}
+                        {% if send.send_done %}
+                            <li class="available-merch list-group-item">
+                                <span>{{ send.fcs }}</span>
+                                <span>{{ send.send_description }}</span>
+                                <span>{{ send.where }}</span>
+                            </li>
+                        {% else %}
+                            <li class="not-available-merch list-group-item">
+                                <span>{{ send.fcs }}</span>
+                                <span>{{ send.send_description }}</span>
+                                <span>{{ send.where }}</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+            <form action="#" method="post" class="send-to-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_fcs">ФИО:</label>
+                    <input type="text" name="fcs" class="form-control" required id="id_fcs"
+                           placeholder="">
                 </div>
-            {% endfor %}
-
-            <div class="price-add">
-                <p>
-                    <label for="id_price">Цена</label>
-                    <input type="number" name="price" required="" id="id_price" value="">
-                </p>
-                <p>
-                    <label for="id_optional_info">Дополнительно</label>
-                    {{ form.optional_info }}
-                </p>
-                <input type="submit" class="btn btn-info" value="Добавить">
-
-            </div>
-        </form>
-
-        {#        <form method="post" class="other-product-form">#}
-        {##}
-        {#            {% csrf_token %}#}
-        {#            <div class="img__choice-wrapper">#}
-        {#                <input type="hidden" id="id_product" value="">#}
-        {#                {% for other in all_other %}#}
-        {#                    <div class="img_choice"><img src="{{ other.image }}" alt=""></div>#}
-        {#                    <input type="hidden" class="img_id" value="{{ other.id }}">#}
-        {#                    <input type="hidden" class="img_price" value="{{ other.price }}">#}
-        {#                {% endfor %}#}
-        {#            </div>#}
-        {#            {% for outerwear in all_outerwear %}#}
-        {#                <div class="select-size-wrapper select-size-hidden">#}
-        {#                    <label for="id_size">Размер</label>#}
-        {#                    <input type="hidden" value="{{ outerwear.id }}">#}
-        {#                    <select name="size" id="id_size">#}
-        {#                        <option selected="true" disabled="disabled">Выберите размер</option>#}
-        {#                        {% for size,value in outerwear.sizes.items %}#}
-        {#                            {% if value != 0 %}#}
-        {#                                <option value="{{ size }}">{{ size }}</option>#}
-        {#                            {% else %}#}
-        {#                                <option disabled value="{{ size }}">{{ size }} Недоступно</option>#}
-        {#                            {% endif %}#}
-        {#                        {% endfor %}#}
-        {#                    </select>#}
-        {#                </div>#}
-        {#            {% endfor %}#}
-        {##}
-        {#            <div class="price-add">#}
-        {#                <p>#}
-        {#                    <label for="id_price">Цена</label>#}
-        {#                    <input type="number" name="price" required="" id="id_price" value="">#}
-        {#                </p>#}
-        {#                <p>#}
-        {#                    <label for="id_optional_info">Дополнительно</label>#}
-        {#                    {{ form.optional_info }}#}
-        {#                </p>#}
-        {#                <input type="submit" value="Добавить">#}
-        {##}
-        {#            </div>#}
-        {##}
-        {##}
-        {#        </form>#}
-
-
-    </div>
-    <div class="success-add">
-        Успешно добалено
-    </div>
-
-    <h3>Мерч: </h3>
-    <button class="btn-merch btn btn-info">Открыть</button>
-
-    <ul class="list-group merch-list d-none">
-        {% for outerwear in all_outerwear %}
-            <div main-fin-item>
-                <h3>{{ outerwear.name }}</h3>
-                <div class="outer-img"><img src="{{ outerwear.img }}" alt=""></div>
-            </div>
-
-            {% for size, value in outerwear.sizes.items %}
-                {% if value == 0 %}
-                    <li class="not-available">
-                        <span>{{ value }}</span>
-                        <span>{{ size }}</span>
-                    </li>
-                {% else %}
-                    <li class="available">
-                        <span>{{ value }}</span>
-                        <span>{{ size }}</span>
-                    </li>
-                {% endif %}
-
-            {% endfor %}
-        {% endfor %}
-        {% for other in all_other %}
-            <div main-fin-item>
-                <h3>{{ other.name }}</h3>
-                <div class="outer-img"><img src="{{ other.image.url }}" alt=""></div>
-                {% if other.quantity == 0 %}
-                    <li class="not-available">
-                        <span>{{ other.quantity }}</span>
-                    </li>
-                {% else %}
-                    <li class="available">
-                        <span>{{ other.quantity }}</span>
-                    </li>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </ul>
-
-
-
-    <h3>Долги: </h3>
-    <button class="btn-merch btn btn-info">Открыть</button>
-
-    <ul class="list-group merch-list d-none">
-        {% for debt in debts %}
-            <li class="d-flex list-product">
-                <div class="list-product-item">{{ debt.user.first_name }}</div>
-                <div class="list-product-item">{{ debt.value }}</div>
-                <div class="list-product-item">{{ debt.description }}</div>
-            </li>
-        {% endfor %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form_debt.as_p }}
-            <input type="submit" class="btn btn-info" value="Добавить">
-        </form>
-    </ul>
-
-
-
-    <p class="total-debt total-number">Долги: <span class="main-info">{{ total_debt }} рублей</span></p>
-    <p class="total-money total-number">Всего: <span class="main-info">{{ total }} рублей</span></p>
-
-
-
-
-
-
+                <div class="form-group">
+                    <label for="id_where">Адрес:</label>
+                    <input type="text" name="where" class="form-control" required id="id_where" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="id_send_description">Дополнительная информация:</label>
+                    <input type="text" name="send_description" class="form-control" id="id_send_description"
+                           placeholder="">
+                </div>
+                <button type="submit" class="btn btn-info">Добавить</button>
+            </form>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="total-money">
+            Всего: {{ total }}
+        </div>
+        <div class="total-money total-debts">
+            Долги: {{ total_debts.value__sum }}
+        </div>
+    </footer>
 {% endblock %}
