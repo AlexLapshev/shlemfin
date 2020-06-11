@@ -99,7 +99,7 @@ class OuterwearDetail(ProductDetail):
 
     @staticmethod
     def total_quantity(pr_id):
-        return sum([i.quantity_size for i in (val for val in OuterwearDetail.objects.filter(product=pr_id))])
+        return sum([i.quantity_size for i in (val for val in OuterwearDetail.objects.filter(product=pr_id))]) - 1
 
     @staticmethod
     def all_sizes():
